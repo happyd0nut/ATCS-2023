@@ -1,23 +1,24 @@
 import pygame
 import sys
-from pathnode import PathNode
 from npc import NPC
+from pathnode import PathNode
 
 class Game:
 
     # Constants
     WIDTH, HEIGHT = 1400, 800
     START_X, START_Y = 24, 24
-    SPACING = 16
-    CELL_SIZE = 50
-    ROWS, COLS = WIDTH // CELL_SIZE, HEIGHT // CELL_SIZE
+    SPACING = 30  # determines spacing of rows/cols
     FPS = 60
 
     # Colors
     WHITE = (255, 255, 255)
-    BACKGROUND_COLOR = (0,0,0)
+    BACKGROUND_COLOR = (255, 255, 255)
 
     def __init__(self):
+
+        # Toggle to see Nodes and paths
+        self.DEBUG = True
 
         # Initialize Pygame
         pygame.init()
@@ -97,8 +98,8 @@ class Game:
                     if self.is_path_node(letter):
                         node = PathNode(pos_x, pos_y, PathNode.DEFAULT)
                         if letter == "1":
-                            self.ghost = NPC(self, line[col], pos_x, pos_y)
-                            self.ghost.set_spawn_node(node)
+                            self.npc = NPC(self, line[col], pos_x, pos_y)
+                            self.npc.set_spawn_node(node)
         
                         self.path_nodes.add(node)
                         grid_row.append(node)
@@ -170,10 +171,10 @@ class Game:
             # TODO: add background image here again with self.screen.blit()
 
             # Draw sprites
-            self.NPC.draw(self.screen)
-            # if self.DEBUG:
-            #     self.path_nodes.draw(self.screen)
-            #     self.show_ghost_path()
+            self.npc.draw(self.screen)
+            if self.DEBUG:
+                self.path_nodes.draw(self.screen)
+            #   self.show_ghost_path()
 
             # Update the display
             pygame.display.flip()

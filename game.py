@@ -33,14 +33,20 @@ class Game:
 
         # Sprites
         self.path_nodes = pygame.sprite.Group()
-        self.NPC = None
-        self.scatter_node = None
+        self.npc = None
+        self.destination_node = None
 
         # Paths
         self.txt_grid = []
         self.grid = []
 
+        print("before path")
         self.load_path()
+        print("after path")
+
+        # Load the NPC's initial paths
+        self.npc.find_destination_path()
+
 
     def is_path(self, letter):
             """
@@ -111,8 +117,8 @@ class Game:
                 line = file.readline()
                 row += 1
 
-        # Set the ghost's scatter node
-        # self.ghost.set_scatter_node(self.scatter_node)
+        # Set the NPC's destination node
+        self.npc.set_destination_node(self.destination_node)
 
         # Connect the nodes
         self.connect_paths()
@@ -163,7 +169,7 @@ class Game:
 
             # Only update 60 fps
             if self.dt > 60:
-                
+                self.npc.move()
                 self.dt = 0
 
             # Clear the screen
@@ -174,7 +180,6 @@ class Game:
             self.npc.draw(self.screen)
             if self.DEBUG:
                 self.path_nodes.draw(self.screen)
-            #   self.show_ghost_path()
 
             # Update the display
             pygame.display.flip()

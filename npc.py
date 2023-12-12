@@ -234,7 +234,6 @@ class NPC(pygame.sprite.Sprite):
         self.timer_duration = 15
         self.image = pygame.image.load("assets/npc_connor.png")
 
-
     def sleep(self):
         print("zz zz zzzz")
         self.timer_duration = 5

@@ -30,7 +30,7 @@ class Game:
         # Initialize the game window
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         pygame.display.set_caption("Life of Julia")
-        self.background_img = pygame.image.load("Assets/Background.png")
+        self.background_img = pygame.image.load("Assets/Background_green.png")
         self.background_img = pygame.transform.scale(self.background_img, (850, 915))
 
         # Sprites

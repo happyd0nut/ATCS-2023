@@ -1,13 +1,14 @@
 import pygame
 import sys
+import time
 from npc import NPC
 from pathnode import PathNode
 
 class Game:
 
     # Constants
-    WIDTH, HEIGHT = 1400, 800
-    START_X, START_Y = 24, 24
+    WIDTH, HEIGHT = 1400, 1000
+    START_X, START_Y = 325, 90
     SPACING = 30  # determines spacing of rows/cols
     FPS = 60
 
@@ -29,7 +30,8 @@ class Game:
         # Initialize the game window
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         pygame.display.set_caption("Life of Julia")
-        # TODO: add background image
+        self.background_img = pygame.image.load("Assets/Background.png")
+        self.background_img = pygame.transform.scale(self.background_img, (850, 915))
 
         # Sprites
         self.path_nodes = pygame.sprite.Group()
@@ -157,6 +159,9 @@ class Game:
                                 break
 
     def run(self):
+        
+        start_time = time.time()
+
         running = True
         while running:
             # Set frame rate
@@ -167,19 +172,36 @@ class Game:
                 if event.type == pygame.QUIT:
                     running = False
 
-            # Only update 60 fps
-            if self.dt > 60:
-                self.npc.move()
-                self.dt = 0
+            # Update walking for FSM
+            if self.npc.fsm.current_state == "wlk":
+                # Only update 60 FPS
+                if self.dt > 30 and len(self.npc.path) > 0:
+                    self.npc.move()
+                    self.dt = 0
+                
+                if len(self.npc.path) == 0:
+                    if self.dt > 2000: # find new destination_node after 2 seconds
+                        self.npc.find_destination_path()
+                        self.dt = 0
+
 
             # Clear the screen
             self.screen.fill(self.BACKGROUND_COLOR)
+            self.screen.blit(self.background_img, (280, 50))
+            
+
             # TODO: add background image here again with self.screen.blit()
 
+            # Check timer for FSM
+            elapsed_time = time.time() - start_time
+            if elapsed_time > self.npc.timer_duration:
+                self.npc.fsm.process(self.npc.TIMER_UP)
+                start_time = time.time()
+            
             # Draw sprites
-            self.npc.draw(self.screen)
             if self.DEBUG:
                 self.path_nodes.draw(self.screen)
+            self.npc.draw(self.screen)
 
             # Update the display
             pygame.display.flip()

@@ -11,7 +11,7 @@ class PathNode(pygame.sprite.Sprite):
 
         # Load the image
         if node_type == self.DEFAULT:
-            self.image = pygame.image.load("assets/Node.png")
+            self.image = pygame.image.load("assets/node_tile.png")
 
         self.type = node_type
         

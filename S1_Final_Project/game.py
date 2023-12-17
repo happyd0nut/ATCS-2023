@@ -2,14 +2,15 @@ import pygame
 import sys
 import time
 from npc import NPC
+from player import Player
 from pathnode import PathNode
 
 class Game:
 
     # Constants
     WIDTH, HEIGHT = 1400, 1000
-    START_X, START_Y = 325, 90
-    SPACING = 30  # determines spacing of rows/cols
+    START_X, START_Y = 305, 90
+    SPACING = 23.2  # determines spacing of rows/cols, originally 30
     FPS = 60
 
     # Colors
@@ -26,17 +27,19 @@ class Game:
         pygame.mixer.init()
         self.clock = pygame.time.Clock()
         self.dt = 0
+        self.dt_2 = 0
 
         # Initialize the game window
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         pygame.display.set_caption("Life of Julia")
-        self.background_img = pygame.image.load("Assets/Background_green.png")
+        self.background_img = pygame.image.load("Assets/Background_town.png")
         self.background_img = pygame.transform.scale(self.background_img, (850, 915))
 
         # Sprites
         self.path_nodes = pygame.sprite.Group()
         self.npc = None
         self.destination_node = None
+        self.player = None
 
         # Paths
         self.txt_grid = []
@@ -73,7 +76,7 @@ class Game:
             Returns:
                 boolean: True if it's a PathNode, False otherwise
             """
-            options = ["X", "1", "D"]
+            options = ["X", "1", "P"]
             return letter in options
 
     def load_path(self):
@@ -89,7 +92,7 @@ class Game:
         [row][col] location.
         """
         row = 0
-        with open("assets/map.txt", "r") as file:
+        with open("assets/map_town.txt", "r") as file:
             line = file.readline()
             while line:
                 txt_row = []
@@ -106,8 +109,10 @@ class Game:
                     if self.is_path_node(letter):
                         node = PathNode(pos_x, pos_y, PathNode.DEFAULT)
                         if letter == "1":
-                            self.npc = NPC(self, line[col], pos_x, pos_y)
+                            self.npc = NPC(self, "1", pos_x, pos_y)
                             self.npc.set_spawn_node(node)
+                        elif letter == "P":
+                            self.player = Player(self, pos_x, pos_y)
         
                         self.path_nodes.add(node)
                         grid_row.append(node)
@@ -166,31 +171,35 @@ class Game:
         while running:
             # Set frame rate
             self.dt += self.clock.tick(60)
+            self.dt_2 += self.clock.tick(60)
 
             # Check for keyboard input
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+            
+            keys = pygame.key.get_pressed()
+            self.player.move(keys)
 
-            # Update walking for FSM
-            if self.npc.fsm.current_state == "wlk":
-                # Only update 60 FPS
-                if self.dt > 30 and len(self.npc.path) > 0:
-                    self.npc.move()
+            # Update self.player location
+            if self.dt_2 > 35:
+                self.player.update()
+                self.dt_2 = 0
+        
+            # Update FSM input with FPS
+            if self.dt > 30 and len(self.npc.path) > 0:
+                self.npc.fsm.process(self.npc.CAN_WALK)
+                self.dt = 0
+            
+            # Wait 2 sec then find new destination_node when path empty
+            if len(self.npc.path) == 0:
+                if self.dt > 2000:
+                    self.npc.find_destination_path()
                     self.dt = 0
-                
-                if len(self.npc.path) == 0:
-                    if self.dt > 2000: # find new destination_node after 2 seconds
-                        self.npc.find_destination_path()
-                        self.dt = 0
-
 
             # Clear the screen
             self.screen.fill(self.BACKGROUND_COLOR)
             self.screen.blit(self.background_img, (280, 50))
-            
-
-            # TODO: add background image here again with self.screen.blit()
 
             # Check timer for FSM
             elapsed_time = time.time() - start_time
@@ -200,7 +209,8 @@ class Game:
             
             # Draw sprites
             if self.DEBUG:
-                self.path_nodes.draw(self.screen)
+                # self.path_nodes.draw(self.screen)
+                self.player.draw(self.screen)
             self.npc.draw(self.screen)
 
             # Update the display

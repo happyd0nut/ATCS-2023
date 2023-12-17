@@ -15,15 +15,16 @@ class NPC(pygame.sprite.Sprite):
     # inputs
     TIMER_UP = "tu"
     NIGHT = "nt"
+    CAN_WALK = "cw"
 
     RIGHT, LEFT, UP, DOWN = 0, 1, 2, 3
     PEOPLE = {"1": "Friend"}
 
-    def __init__(self, game, name, x, y):
+    def __init__(self, game, index, x, y):
         super().__init__()
         
         self.game = game
-        self.name = self.PEOPLE[name]
+        self.name = self.PEOPLE[index]
 
         # Setting up animation
         self.anim = []
@@ -223,6 +224,9 @@ class NPC(pygame.sprite.Sprite):
         self.fsm.add_transition(self.TIMER_UP, self.SLEEP, self.do_task, self.TASK)
         self.fsm.add_transition(self.TIMER_UP, self.TASK, self.walk, self.WALK)
         self.fsm.add_transition(self.TIMER_UP, self.WALK, self.sleep, self.SLEEP)
+        self.fsm.add_transition(self.CAN_WALK, self.WALK, self.move, self.WALK)
+        self.fsm.add_transition(self.CAN_WALK, self.SLEEP, None, None)
+        self.fsm.add_transition(self.CAN_WALK, self.TASK, None, None)
 
     def do_task(self):
         print("i am doing my task!")

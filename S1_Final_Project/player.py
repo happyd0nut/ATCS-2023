@@ -45,7 +45,6 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_RIGHT] and self.rect.x < self.game.WIDTH - self.width:
             self.vel_x += self.speed
         if keys[pygame.K_UP] and self.rect.y > 0:
-            print("Test")
             self.vel_y -= self.speed
         if keys[pygame.K_DOWN] and self.rect.y < self.game.HEIGHT - self.height:
             self.vel_y += self.speed

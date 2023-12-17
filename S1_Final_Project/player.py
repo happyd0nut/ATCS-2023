@@ -1,3 +1,7 @@
+"""
+@author: ChatGPT, editted by Julia Lau
+"""
+
 import pygame
 
 class Player(pygame.sprite.Sprite):
@@ -7,7 +11,7 @@ class Player(pygame.sprite.Sprite):
         self.game = game
 
         # Load initial image
-        self.image = pygame.image.load("assets/player.png") # add in image
+        self.image = pygame.image.load("assets/player.png") 
         self.rect = self.image.get_rect()
 
         # Set rectangle
@@ -36,13 +40,14 @@ class Player(pygame.sprite.Sprite):
         self.vel_x = 0
         self.vel_y = 0
 
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] and self.rect.x > 0:
             self.vel_x -= self.speed
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_RIGHT] and self.rect.x < self.game.WIDTH - self.width:
             self.vel_x += self.speed
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_UP] and self.rect.y > 0:
+            print("Test")
             self.vel_y -= self.speed
-        if keys[pygame.K_DOWN]:
+        if keys[pygame.K_DOWN] and self.rect.y < self.game.HEIGHT - self.height:
             self.vel_y += self.speed
 
     def update(self):
@@ -51,3 +56,7 @@ class Player(pygame.sprite.Sprite):
 
     def draw(self, screen):
         screen.blit(self.image, (self.rect.x , self.rect.y ))
+
+"""
+End of ChatGPT code
+"""

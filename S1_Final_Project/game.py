@@ -1,3 +1,7 @@
+"""
+@author: Ms. Namasivayam and Julia Lau
+"""
+
 import pygame
 import sys
 import time
@@ -8,10 +12,11 @@ from pathnode import PathNode
 class Game:
 
     # Constants
-    WIDTH, HEIGHT = 1400, 1000
-    START_X, START_Y = 305, 90
-    SPACING = 23.2  # determines spacing of rows/cols, originally 30
-    FPS = 60
+    WIDTH, HEIGHT = 910, 1000 
+    START_X, START_Y = 55, 80 
+    SPACING = 23.2  # Spacing of rows/cols
+    FPS_NPC = 30
+    FPS_PLAYER = 35
 
     # Colors
     WHITE = (255, 255, 255)
@@ -32,7 +37,7 @@ class Game:
         # Initialize the game window
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         pygame.display.set_caption("Life of Julia")
-        self.background_img = pygame.image.load("Assets/Background_town.png")
+        self.background_img = pygame.image.load("Assets/background_town.png")
         self.background_img = pygame.transform.scale(self.background_img, (850, 915))
 
         # Sprites
@@ -181,13 +186,13 @@ class Game:
             keys = pygame.key.get_pressed()
             self.player.move(keys)
 
-            # Update self.player location
-            if self.dt_2 > 35:
+            # Update player location
+            if self.dt_2 > self.FPS_PLAYER:
                 self.player.update()
                 self.dt_2 = 0
         
-            # Update FSM input with FPS
-            if self.dt > 30 and len(self.npc.path) > 0:
+            # Update FSM input 
+            if self.dt > self.FPS_NPC and len(self.npc.path) > 0:
                 self.npc.fsm.process(self.npc.CAN_WALK)
                 self.dt = 0
             
@@ -199,7 +204,7 @@ class Game:
 
             # Clear the screen
             self.screen.fill(self.BACKGROUND_COLOR)
-            self.screen.blit(self.background_img, (280, 50))
+            self.screen.blit(self.background_img, (30, 40)) #removed 250 from x
 
             # Check timer for FSM
             elapsed_time = time.time() - start_time
@@ -209,7 +214,6 @@ class Game:
             
             # Draw sprites
             if self.DEBUG:
-                # self.path_nodes.draw(self.screen)
                 self.player.draw(self.screen)
             self.npc.draw(self.screen)
 

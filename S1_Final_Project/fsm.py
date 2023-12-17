@@ -1,5 +1,5 @@
 """
-@author: Ms. Namasivayam and Julia Lau
+@author: Ms. Namasivayam
 """
 
 class FSM:

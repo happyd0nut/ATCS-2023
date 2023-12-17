@@ -1,7 +1,9 @@
+"""
+@author: Julia Lau and Ms. Namasivayam
+"""
+
 import pygame
 from fsm import FSM
-import time
-import sys
 import random
 
 
@@ -26,14 +28,8 @@ class NPC(pygame.sprite.Sprite):
         self.game = game
         self.name = self.PEOPLE[index]
 
-        # Setting up animation
-        self.anim = []
-        self.anim_count = 0
-        self.anim_uption = self.UP
-        # self.load_images()
-
         # Load initial image
-        self.image = pygame.image.load("assets/npc_connor.png") # add in image
+        self.image = pygame.image.load("assets/npc.png") 
         self.rect = self.image.get_rect()
 
         # Set rectangle
@@ -63,12 +59,6 @@ class NPC(pygame.sprite.Sprite):
         self.path = []
 
     def set_spawn_node(self, node):
-        """
-        Assigns the spawn node and sets the 
-        current node to it.
-        Args:
-            node (PathNode): The node to spawn at
-        """
         self.spawn_node = node
         self.set_current_node(node)
 
@@ -95,9 +85,6 @@ class NPC(pygame.sprite.Sprite):
         """
         Finds a path from the start_node to the end_node
         using DFS
-        Args:
-            start_node (PathNode): Node to start at
-            end_node (PathNode): Node to end at
         """
         parents = {}
         visited = []
@@ -117,33 +104,23 @@ class NPC(pygame.sprite.Sprite):
             self.path.insert(0, trace_node)
             trace_node = parents[trace_node]
         self.path.insert(0, start_node)
-        print("Path found and created")
 
     def stop(self):
         self.vel_x = 0
         self.vel_y = 0
     
     def move(self, input=None):
-        """
-        The move function that
-        """
         self.update_velocities()
         
         # Update position
         self.rect.x += self.vel_x
         self.rect.y += self.vel_y
 
-        # Update image for animation
-        # anim = self.anim[self.anim_option]
-        # self.anim_count = (self.anim_count + 1) % len(anim)
-        # self.image = anim[self.anim_count]
-
     def update_velocities(self):
         """
         Determines the direction of the next node
         in the path and sets the velocity towards
-        that direction. Also modifies the 
-        animation option appropriately.
+        that direction.
         """
         # Reset velocities to 0
         self.stop()
@@ -171,52 +148,17 @@ class NPC(pygame.sprite.Sprite):
         if abs(diffx) < self.speed:
             if diffy > 0:
                 # The node is below us
-                # self.anim_option = self.DOWN
                 self.vel_y = self.speed
             else:
-                # self.anim_option = self.UP
                 self.vel_y = -self.speed
         
         # Otherwise we're going left or right
         else:
             if diffx > 0:
                 # The node is to the right
-                # self.anim_option = self.RIGHT
                 self.vel_x = self.speed
             else:
-                # self.anim_option = self.LEFT
                 self.vel_x = -self.speed
-
-
-    def load_images(self):
-        """
-        Load the images for walking NPC
-        """
-        right = self.load_image_directions("right")
-        left = self.load_image_directions("left")
-        up = self.load_image_directions("up")
-        down = self.load_image_directions("down")
-
-        self.anim.append(right)
-        self.anim.append(left)
-        self.anim.append(up)
-        self.anim.append(down)
-
-    def load_image_directions(self, dir):
-        """
-        Loads the animations for the specific ghost
-        in the provided direction
-        Args:
-            dir (String): "right", "left", "up", or "down"
-
-        Returns:
-            list: A list of the animation images
-        """
-        filepath = "assets/" + self.name + "/" + dir
-        anim = []
-        for i in ["0", "1"]:
-            anim.append(pygame.image.load(filepath+i+".png"))
-        return anim
 
     # FSM Methods Below:
 
@@ -231,17 +173,17 @@ class NPC(pygame.sprite.Sprite):
     def do_task(self):
         print("i am doing my task!")
         self.timer_duration = 5
-        self.image = pygame.image.load("assets/npc_connor_task.png")
+        self.image = pygame.image.load("assets/npc_task.png")
     
     def walk(self):
         print("i am walking")
         self.timer_duration = 15
-        self.image = pygame.image.load("assets/npc_connor.png")
+        self.image = pygame.image.load("assets/npc.png")
 
     def sleep(self):
         print("zz zz zzzz")
         self.timer_duration = 5
-        self.image = pygame.image.load("assets/npc_connor_sleep.png")
+        self.image = pygame.image.load("assets/npc_sleep.png")
 
     def draw(self, screen):
         screen.blit(self.image, (self.rect.x , self.rect.y ))

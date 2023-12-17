@@ -1,6 +1,7 @@
 """
 @author: Ms. Namasivayam
 """
+
 import pygame
 
 class PathNode(pygame.sprite.Sprite):
@@ -9,10 +10,7 @@ class PathNode(pygame.sprite.Sprite):
     def __init__(self, x=50, y=50, node_type=0):
         super().__init__()
 
-        # Load the image
-        if node_type == self.DEFAULT:
-            self.image = pygame.image.load("assets/node_tile.png")
-
+        self.image = pygame.image.load("assets/node.png")
         self.type = node_type
         
         # Set the position to be the center of the image
@@ -26,10 +24,6 @@ class PathNode(pygame.sprite.Sprite):
         self.adjacent_nodes = []
     
     def add_adjacent(self, p):
-        """
-        Args:
-            p (PathNode): A path node adjacent to this one
-        """
         self.adjacent_nodes.append(p)
     
     def __repr__(self):
